@@ -1,0 +1,7 @@
+{
+  "description": "Static proposed fix. No test execution is implied by this fixture.",
+  "files": {
+    "package.json": "{\n  \"name\": \"checkout-kit\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"vitest run\",\n    \"build\": \"vite build\"\n  },\n  \"devDependencies\": { \"vitest\": \"^4.0.0\" }\n}\n",
+    ".github/workflows/ci.yml": "name: Test and build\non: [push, pull_request]\njobs:\n  verify:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n      - run: npm ci\n      - run: npm test\n      - run: npm run build\n"
+  }
+}

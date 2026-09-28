@@ -1,0 +1,7 @@
+{
+  "description": "The delegated workflow cannot be assessed by the MVP.",
+  "files": {
+    "package.json": "{ \"name\": \"checkout-kit\", \"scripts\": { \"test\": \"vitest run\" } }\n",
+    ".github/workflows/ci.yml": "name: Delegated tests\non: [push]\njobs:\n  test:\n    uses: example/shared/.github/workflows/test.yml@main\n"
+  }
+}
