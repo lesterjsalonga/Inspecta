@@ -19,7 +19,9 @@ async function confirmedTask(page) {
     .fill('The CI workflow declares a direct npm test command.');
   await page.getByRole('button', { name: 'Confirm & await fix' }).click();
   await expect(page.getByRole('heading', { name: 'Prepare verification' })).toBeVisible();
-  const response = await page.request.post('/api/demo', { data: { variant: 'after' } });
+  const response = await page.request.post('/api/demo', {
+    data: { variant: 'after' },
+  });
   const scan = await response.json();
   await page.reload();
   await page.getByLabel('Verification snapshot', { exact: true }).selectOption(scan.id);
@@ -59,14 +61,18 @@ test('confirmed issue: investigation → decision → proposed fix → verified 
     .fill('Reviewed the fixture requirement and workflow source.');
   await page.getByRole('button', { name: 'Add note' }).click();
   await expect(
-    page.getByText('Reviewed the fixture requirement and workflow source.', { exact: true }),
+    page.getByText('Reviewed the fixture requirement and workflow source.', {
+      exact: true,
+    }),
   ).toBeVisible();
   await page.getByLabel('Decision rationale').fill('The documented fixture requirement is unmet.');
   await page
     .getByLabel('Verification criteria', { exact: true })
     .fill('The workflow declares npm test.');
   await page.getByRole('button', { name: 'Confirm & await fix' }).click();
-  const response = await page.request.post('/api/demo', { data: { variant: 'after' } });
+  const response = await page.request.post('/api/demo', {
+    data: { variant: 'after' },
+  });
   const fixed = await response.json();
   await page.reload();
   await page.getByLabel('Verification snapshot', { exact: true }).selectOption(fixed.id);
@@ -83,9 +89,14 @@ test('confirmed issue: investigation → decision → proposed fix → verified 
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByText('Reviewed the fixture requirement and workflow source.', { exact: true }),
+    page.getByText('Reviewed the fixture requirement and workflow source.', {
+      exact: true,
+    }),
   ).toBeVisible();
-  await page.screenshot({ path: 'test-results/verified-task.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/verified-task.png',
+    fullPage: true,
+  });
 });
 test('expected behavior can close without pretending a fix was verified; notes are escaped', async ({
   page,
@@ -140,9 +151,12 @@ test('related findings group into a single task and links replace duplicate crea
 test('workspace renders on a phone without horizontal overflow', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
-  await expect(page.getByRole('heading', { name: 'Evidence before conclusions.' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Observe. Investigate. Verify.' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,
   );
-  await page.screenshot({ path: 'test-results/mobile-workspace.png', fullPage: true });
+  await page.screenshot({
+    path: 'test-results/mobile-workspace.png',
+    fullPage: true,
+  });
 });

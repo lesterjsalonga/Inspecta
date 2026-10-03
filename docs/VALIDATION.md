@@ -33,3 +33,29 @@ The evaluation includes explicit inconclusive cases and a quoted-URL installatio
 The GitHub Actions workflow is configured but has not been run on a hosted repository. The app has not been publicly deployed. Only Chromium and the documented local, single-reviewer configuration were exercised.
 
 Use the README commands to reproduce the checks. The browser suite also generates a local HTML report in playwright-report and screenshots under test-results; these transient outputs are excluded from source control.
+
+## Graphite interface update — 2026-10-03
+
+Applied the approved charcoal-and-mint design with Doto pixel headings, IBM Plex Mono labels and controls, and IBM Plex Sans body copy. The home screen now has top navigation and an investigation journal populated from saved tasks. Empty workspaces show an explanation and a fixture demo entry point rather than sample tasks presented as real data.
+
+| Check                     | Observed result                                                                                                                                           |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Production build          | Passed                                                                                                                                                    |
+| Existing automated suite  | All 58 tests passed                                                                                                                                       |
+| Existing browser journeys | All 5 passed, including confirmed issue closure and failed/inconclusive verification                                                                      |
+| Formatting                | Passed                                                                                                                                                    |
+| Local font loading        | All four bundled font files loaded with external browser requests blocked; no external requests were attempted                                            |
+| Journal navigation        | A saved fixture task appeared in the journal and opened the matching investigation                                                                        |
+| Keyboard navigation       | Skip-to-content moved focus into the main content without changing the application route                                                                  |
+| Responsive layout         | Workspace, snapshot, investigation and task list had no page-level horizontal overflow at 390px and 320px; wide tables scroll within their own containers |
+| Runtime/resources         | No browser page errors or missing resources during the visual checks                                                                                      |
+
+The screenshots were captured using a separate in-memory database and synthetic fixture data. Visual review covered the empty and populated desktop workspace, demo findings, and desktop/mobile investigation screens. The user's saved workspace was not used for test data.
+
+- [Workspace](images/workspace.png)
+- [Populated journal](images/populated-workspace.png)
+- [Demo findings](images/demo-review.png)
+- [Investigation](images/investigation.png)
+- [Mobile workspace](images/mobile-workspace.png)
+
+Font sources and preserved licenses are documented in [public/fonts/README.md](../public/fonts/README.md). This update changes presentation and navigation; the capture and rule engine were unchanged. The earlier 18-case evaluation above was not rerun for the interface update.

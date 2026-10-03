@@ -201,48 +201,46 @@ function App() {
   const isTasks = route.startsWith('/tasks');
   return (
     <div className="shell">
-      <aside className="sidebar">
+      <a
+        className="skip-link"
+        href="#main-content"
+        onClick={(event) => {
+          event.preventDefault();
+          document.getElementById('main-content').focus();
+        }}
+      >
+        Skip to content
+      </a>
+      <header className="app-header">
         <a className="brand" href="#/reviews">
           <span className="brand-mark">
             <Icon name="search" size={23} />
           </span>
-          inspecta<span className="brand-dot">.</span>
+          inspecta
         </a>
-        <div className="workspace-label">QA REVIEW WORKSPACE</div>
         <nav aria-label="Main navigation">
-          <a href="#/reviews" className={!isTasks ? 'active' : ''}>
-            <Icon name="repo" />
-            Repository reviews
+          <a
+            href="#/reviews"
+            className={!isTasks ? 'active' : ''}
+            aria-current={!isTasks ? 'page' : undefined}
+          >
+            Reviews
           </a>
-          <a href="#/tasks" className={isTasks ? 'active' : ''}>
-            <Icon name="list" />
-            Review tasks
-            <span className="nav-count">{tasks.filter((t) => t.status !== 'Closed').length}</span>
+          <a
+            href="#/tasks"
+            className={isTasks ? 'active' : ''}
+            aria-current={isTasks ? 'page' : undefined}
+          >
+            Investigations
+            <span className="nav-count" aria-label="open tasks">
+              {tasks.filter((t) => t.status !== 'Closed').length}
+            </span>
           </a>
         </nav>
-        <div className="sidebar-note">
-          <span className="mini-icon">
-            <Icon name="file" />
-          </span>
-          <h3>Keep the evidence.</h3>
-          <p>Every finding is a starting point. Your investigation tells the rest of the story.</p>
-        </div>
-        <div className="sidebar-bottom">
-          <span className="live-dot" />
-          Local workspace<div>Inspecta 0.1 · npm repositories</div>
-        </div>
-      </aside>
+        <span className="workspace-label">Local QA workspace</span>
+      </header>
       <div className="workspace">
-        <header className="topbar">
-          <div>
-            Workspace <span>/</span> {isTasks ? 'Review tasks' : 'Repository reviews'}
-          </div>
-          <span className="readonly">
-            <span className="live-dot" />
-            Read-only repository analysis
-          </span>
-        </header>
-        <main>
+        <main id="main-content" tabIndex={-1}>
           {error && (
             <div className="error" role="alert">
               {error}
@@ -281,58 +279,29 @@ function Reviews({ scans, tasks, busy, perform, createDemo }) {
     [commit, setCommit] = useState('');
   return (
     <>
-      <Title
-        eyebrow="LOOK CLOSER. LEAVE A TRAIL."
-        title="Evidence before conclusions."
-        text="Review a repository. Investigate what matters. Verify what changed."
-      />
-      <div className="stats">
-        <div>
-          <span className="stat-icon">
-            <Icon name="repo" />
-          </span>
-          <div>
-            <span className="stat-label">Saved snapshots</span>
-            <strong>{scans.length.toString().padStart(2, '0')}</strong>
-          </div>
-        </div>
-        <div>
-          <span className="stat-icon amber">
-            <Icon name="search" />
-          </span>
-          <div>
-            <span className="stat-label">Open investigations</span>
-            <strong>
-              {tasks
-                .filter((t) => t.status !== 'Closed')
-                .length.toString()
-                .padStart(2, '0')}
-            </strong>
-          </div>
-        </div>
-        <div>
-          <span className="stat-icon">
-            <Icon name="check" />
-          </span>
-          <div>
-            <span className="stat-label">Verified resolutions</span>
-            <strong>
-              {tasks
-                .filter((t) => t.status === 'Closed' && t.decision === 'Confirmed issue')
-                .length.toString()
-                .padStart(2, '0')}
-            </strong>
-          </div>
-        </div>
+      <div className="review-hero">
+        <Title
+          eyebrow="YOUR REVIEW WORKSPACE"
+          title={
+            <>
+              <span>Observe.</span> <span>Investigate.</span>
+              <br />
+              <span>Verify.</span>
+            </>
+          }
+          text="Keep the reasoning connected to the evidence."
+        />
       </div>
       <div className="start-grid">
-        <section className="panel new-review">
+        <section className="new-review" aria-labelledby="capture-heading">
           <div className="panel-heading">
             <div>
-              <h2>Start a repository review</h2>
-              <p>A specific snapshot. Three explainable checks.</p>
+              <h2 id="capture-heading">Begin with a snapshot.</h2>
+              <p>
+                Three focused checks.
+                <br />A permanent reference for your review.
+              </p>
             </div>
-            <Icon name="repo" size={25} />
           </div>
           <form
             onSubmit={(e) => {
@@ -373,59 +342,88 @@ function Reviews({ scans, tasks, busy, perform, createDemo }) {
               </Field>
             </details>
             <div className="form-bottom">
-              <span>
-                <Icon name="file" size={16} />
-                Files are read, never executed.
-              </span>
               <button className="primary" disabled={busy}>
                 {busy ? 'Working…' : 'Review repository'}
                 <Icon name="arrow" size={18} />
               </button>
+              <span>
+                <Icon name="file" size={16} />
+                Files are read, never executed.
+              </span>
             </div>
           </form>
+          <div className="check-strip" aria-label="Included checks">
+            <span>Installation patterns</span>
+            <span>Test entry point</span>
+            <span>CI invocation</span>
+          </div>
         </section>
-        <section className="journey">
-          <div className="eyebrow">THE REVIEW PROCESS</div>
-          <h2>
-            From a signal <br />
-            to a supported decision.
-          </h2>
-          <ol>
-            {[
-              ['Find', 'Patterns with a clear explanation.'],
-              ['Investigate', 'Context, notes, and evidence.'],
-              ['Decide & verify', 'A conclusion you can trace.'],
-            ].map(([a, b], i) => (
-              <li key={a}>
-                <span>{i + 1}</span>
-                <div>
-                  <strong>{a}</strong>
-                  <p>{b}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+        <section className="panel journal" aria-labelledby="journal-heading">
+          <div className="panel-heading">
+            <h2 id="journal-heading">Investigation journal</h2>
+            <span className="muted">{tasks.length ? 'Recent tasks' : 'Your evidence trail'}</span>
+          </div>
+          {tasks.length ? (
+            <>
+              <ul className="journal-list">
+                {tasks.slice(0, 2).map((task) => (
+                  <li key={task.id}>
+                    <Badge value={task.status} />
+                    <h3>
+                      <a href={'#/tasks/' + task.id}>{task.title}</a>
+                    </h3>
+                    <div className="journal-meta">
+                      {task.repository} · {task.findings.map((f) => f.ruleId).join(', ')}
+                    </div>
+                    <p>Decision: {task.decision}</p>
+                    <a className="text-action" href={'#/tasks/' + task.id}>
+                      Open investigation <Icon name="arrow" size={16} />
+                    </a>
+                  </li>
+                ))}
+              </ul>
+              <a className="text-action journal-all" href="#/tasks">
+                View all investigations <Icon name="arrow" size={16} />
+              </a>
+            </>
+          ) : (
+            <div className="journal-empty">
+              <Icon name="list" size={24} />
+              <h3>Your first investigation starts with a finding.</h3>
+              <p>
+                Group related findings into a review task. Keep your notes, decision, and fix
+                verification together.
+              </p>
+              <div className="journal-process">
+                <span>Investigate</span>
+                <span>Decide</span>
+                <span>Verify</span>
+              </div>
+            </div>
+          )}
+          <div className="journal-demo">
+            <div>
+              <h3>Try a known example.</h3>
+              <p>
+                Explore a small demo fixture with known conditions. No GitHub connection needed.
+              </p>
+            </div>
+            <button className="secondary" onClick={() => createDemo('before')} disabled={busy}>
+              Open demo review <Icon name="arrow" size={16} />
+            </button>
+          </div>
         </section>
       </div>
-      <div className="demo-banner">
-        <div className="demo-symbol">
-          <Icon name="search" size={24} />
-        </div>
-        <div>
-          <strong>Take a guided first look</strong>
-          <p>Explore a small fixture with known conditions. No GitHub connection needed.</p>
-        </div>
-        <button className="secondary" onClick={() => createDemo('before')} disabled={busy}>
-          Open demo review
-          <Icon name="arrow" size={16} />
-        </button>
+      <div className="workspace-note">
+        <Icon name="file" size={16} />
+        Decisions stay separate from task status.
       </div>
-      <section className="panel">
+      <section className="panel recent-reviews">
         <div className="panel-heading">
           <h2>
             Recent reviews <span className="count">{scans.length}</span>
           </h2>
-          <span className="muted">Snapshots, not safety scores</span>
+          <span className="muted">Recorded repository snapshots</span>
         </div>
         {scans.length ? (
           <ScanTable scans={scans} />
@@ -436,18 +434,6 @@ function Reviews({ scans, tasks, busy, perform, createDemo }) {
           </Empty>
         )}
       </section>
-      <div className="check-strip">
-        {[
-          ['01', 'Installation patterns'],
-          ['02', 'Test entry point'],
-          ['03', 'CI test invocation'],
-        ].map(([n, title]) => (
-          <div key={n}>
-            <span>{n}</span>
-            {title}
-          </div>
-        ))}
-      </div>
     </>
   );
 }
@@ -858,7 +844,11 @@ function Task({ task, scans, busy, perform }) {
   }, [task.criteria]);
   const action = (name, data) =>
     perform(() =>
-      api('/tasks/' + task.id + '/actions', { action: name, revision: task.revision, ...data }),
+      api('/tasks/' + task.id + '/actions', {
+        action: name,
+        revision: task.revision,
+        ...data,
+      }),
     );
   const candidateScans = scans.filter(
     (s) => s.repository === task.repository && s.commit && s.state !== 'failed',
